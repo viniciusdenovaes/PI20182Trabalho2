@@ -9,58 +9,77 @@ import my.model.Cinza;
 public class Teste {
   Controller controller;
   public Teste() {
-    controller = new Controller(new Acao());
+    controller = new Controller(new  BotaoBlurBehavior(), 
+                                new BotaoSharpBehavior(), 
+                                new BotaoLinesBehavior());
   }
-  public class Acao implements ActionListener{
+  
+  //////////////////////////////////////////////////////////
+  //                                       BLUR           //
+  // MEXER AQUI PARA FAZER A AÇÃO DO BOTAO BLUR           //
+  //                                       BLUR           //
+  //////////////////////////////////////////////////////////
+  public class BotaoBlurBehavior implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
+      // A classe Cinza é só um inteiro, 
+      // mas garante que este inteiro estará entre 0 e 255
+      
+      // Esta matriz eh a matriz da imagem original
       Cinza[][] matriz = controller.getMatrizImagemEntrada();
-      double[][] mascara = controller.getMascara();
-      double escalar = controller.getEscalar();
+      // Esta sera a matriz da nova imagem
       Cinza[][] novaMatriz = new Cinza[matriz.length][];
       for(int i=0; i<matriz.length; ++i){
         novaMatriz[i] = new Cinza[matriz[i].length];
         for(int j=0; j<matriz[i].length; ++j){
-          novaMatriz[i][j] = new Cinza();
+          novaMatriz[i][j] = new Cinza((i+j)/10); // aqui estou definindo qual será a nova matriz
         }
       }
-      passaMascara(novaMatriz, matriz, mascara, escalar);
+      // Passando a matriz da nova imagem para fazer uma janela com ela
       controller.showImagemFromMatriz(novaMatriz);
-      //controller.setMatrizImagemEntrada(novaMatriz);
     }
   }
   
-  public void passaMascara(Cinza[][] novaMatriz, Cinza[][] matriz, double[][] mascara, double escalar){
-    for(int x=0; x<matriz.length; ++x) {
-      for(int y=0; y<matriz[x].length; ++y) {
-        Cinza novaCorCinza = passaMascara(matriz, mascara, escalar, x, y);
-        novaMatriz[x][y].set(novaCorCinza.v);
+  //////////////////////////////////////////////////////////
+  //                                       SHARPETING     //
+  // MEXER AQUI PARA FAZER A AÇÃO DO BOTAO SHARPETING     //
+  //                                       SHARPETING     //
+  //////////////////////////////////////////////////////////
+  public class BotaoSharpBehavior implements ActionListener{
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Cinza[][] matriz = controller.getMatrizImagemEntrada();
+      Cinza[][] novaMatriz = new Cinza[matriz.length][];
+      for(int i=0; i<matriz.length; ++i){
+        novaMatriz[i] = new Cinza[matriz[i].length];
+        for(int j=0; j<matriz[i].length; ++j){
+          // aqui estou definindo qual será a nova matriz
+          novaMatriz[i][j] = new Cinza((int)(0.5*(double)matriz[i][j].v) + (i-j)/10);
+        }
       }
+      controller.showImagemFromMatriz(novaMatriz);
     }
   }
   
-  public Cinza passaMascara(final Cinza[][]    matriz, 
-                            final double[][] mascara, 
-                            final double     escalar, 
-                            final int px, final int py){
-    if(   px <                     mascara.length/2 
-        ||px >=matriz    .length - mascara.length/2
-        ||py <                     mascara.length/2
-        ||py >=matriz[py].length - mascara.length/2
-       ){
-      return matriz[px][py];
-    }
-    int novaCorValor = 0;
-    for(int x=0; x<mascara.length; ++x) {
-      for(int y=0; y<mascara.length; ++y) {
-        novaCorValor += (int)(escalar * 
-                              mascara[x][y] *
-                              (double) matriz [ px + ( x-(mascara.length/2) ) ]
-                                              [ py + ( y-(mascara.length/2) ) ].v );
+  //////////////////////////////////////////////////////////
+  //                                       LINES          //
+  // MEXER AQUI PARA FAZER A AÇÃO DO BOTAO LINES          //
+  //                                       LINES          //
+  //////////////////////////////////////////////////////////
+  public class BotaoLinesBehavior implements ActionListener{
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Cinza[][] matriz = controller.getMatrizImagemEntrada();
+      Cinza[][] novaMatriz = new Cinza[matriz.length][];
+      for(int i=0; i<matriz.length; ++i){
+        novaMatriz[i] = new Cinza[matriz[i].length];
+        for(int j=0; j<matriz[i].length; ++j){
+          // aqui estou definindo qual será a nova matriz
+          novaMatriz[i][j] = new Cinza(2*matriz[i][j].v);
+        }
       }
+      controller.showImagemFromMatriz(novaMatriz);
     }
-    Cinza novaCor = new Cinza(novaCorValor);
-    return novaCor;
   }
   
 }

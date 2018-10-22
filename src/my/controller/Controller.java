@@ -11,17 +11,20 @@ import my.model.Cinza;
 import my.model.ImageHandler;
 import my.view.GetImageFrame;
 import my.view.JanelaImagem;
-import my.view.JanelaInputMascara;
+import my.view.JanelaBotoes;
 
 public class Controller {
-  JanelaInputMascara janelaInputMascara;
+  JanelaBotoes janelaBotoes;
   JanelaImagem janelaImagemEntrada;
   BufferedImage imagemEntrada;
   
-  public Controller(ActionListener acao) {
-    janelaInputMascara = new JanelaInputMascara();
-    janelaInputMascara.addCalculaActionListener(acao);
-    janelaInputMascara.addModificaTamanhoActionListener(new MudaTamanhoBehavior());
+  public Controller(ActionListener  blurBehavior, 
+                    ActionListener sharpBehavior, 
+                    ActionListener linesBehavior) {
+    janelaBotoes = new JanelaBotoes();
+    janelaBotoes. setBlurBehavior(blurBehavior);
+    janelaBotoes.setSharpBehavior(sharpBehavior);
+    janelaBotoes.setLinesBehavior(linesBehavior);
     GetImageFrame getImageFrame = new GetImageFrame();
     imagemEntrada = getImageFrame.getImage();
     imagemEntrada = ImageHandler.getImageFromMatriz(ImageHandler.getMatrizImagem(imagemEntrada));
@@ -30,20 +33,6 @@ public class Controller {
         
   }
   
-  public double[][] getMascara(){
-    String[][] mascaraTexto = janelaInputMascara.getMascaraValor();
-    double[][] mascaraValor = new double[mascaraTexto.length][];
-    for(int i=0; i<mascaraTexto.length; ++i){
-      mascaraValor[i] = new double[mascaraTexto[i].length];
-      for(int j=0; j<mascaraTexto[i].length; ++j){
-        mascaraValor[i][j] = CalculoHandler.getValorEscrito(mascaraTexto[i][j]);
-      }
-    }
-    return mascaraValor;
-  }
-  public double getEscalar() {
-    return CalculoHandler.getValorEscrito(janelaInputMascara.getEscalarValor());
-  }
   public Cinza[][] getMatrizImagemEntrada(){
     return ImageHandler.getMatrizImagem(this.imagemEntrada);
   }
@@ -55,26 +44,5 @@ public class Controller {
     JanelaImagem janelaImagem = new JanelaImagem(imagemResultado, 
                                                  "Imagem Resultado");
     janelaImagem.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-  }
-  class MudaTamanhoBehavior implements ActionListener{
-    int tamanhoMascaraAtual;
-    int tamanhoMascaraResultante;
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      tamanhoMascaraAtual = janelaInputMascara.getSizeMascara();
-      if(e.getSource() == janelaInputMascara.getBotaoDiminui())
-        diminuiMascara();
-      else if(e.getSource() == janelaInputMascara.getBotaoAumenta())
-        aumentaMascara();
-      janelaInputMascara.setSizeMascara(tamanhoMascaraResultante);
-      janelaInputMascara.resetPainelCentral();
-    }
-    private void diminuiMascara(){
-      if(tamanhoMascaraAtual>=3)
-        tamanhoMascaraResultante = tamanhoMascaraAtual - 2;
-    }
-    private void aumentaMascara(){
-      tamanhoMascaraResultante = tamanhoMascaraAtual + 2;
-    }
   }
 }
