@@ -1,12 +1,10 @@
 package my.controller;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
-import my.model.CalculoHandler;
 import my.model.Cinza;
 import my.model.ImageHandler;
 import my.view.GetImageFrame;
